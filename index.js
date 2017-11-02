@@ -83,13 +83,56 @@ class WorldView {
 
   constructor(model) {
     this.birdModel = model;
-    }
+    this.canvasElement = document.getElementById("game");
+    this.gameContext = this.canvasElement.getContext("2d");
+    this.birdImage = new Image();
+    this.birdImage.src = "https://studio.code.org/blockly/media/skins/flappy/avatar.png";
+    this.skyBackgroundImage = new Image();
+    this.skyBackgroundImage.src = skyImageData; //"cloud-background.jpg"
+    
+    // ******** OBSTACLES ********
+    this.pipeSpeed = 3.5;
+    this.pipeTopImage = new Image();
+    this.pipeTopImage.src = "https://studio.code.org/blockly/media/skins/flappy/obstacle_top.png";
+    this.pipeBottomImage = new Image();
+    this.pipeBottomImage.src = "https://studio.code.org/blockly/media/skins/flappy/obstacle_bottom.png";
+   
+    this.pipeTopX = 320+(Math.trunc(Math.random()*300));
+    this.pipeBottomX = 320+(Math.trunc(Math.random()*300));
+    this.pipeTopY = -(Math.trunc(Math.random()*320));
+    this.pipeBottomY = 480 + (Math.trunc(Math.random()*320));
+    // ******** OBSTACLES ********
+  }
 
   render() {
     //document.getElementById("input").value=this.birdModel.position.x;
-    gameContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    gameContext.drawImage(skyBackgroundImage, -(this.birdModel.position.x)% (skyBackgroundImage.width-canvasElement.width), 0, skyBackgroundImage.width, skyBackgroundImage.height);
-    gameContext.drawImage(birdImage, 5, Math.trunc(this.birdModel.position.y), birdImage.width, birdImage.height);
+    this.gameContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+    this.gameContext.drawImage(this.skyBackgroundImage, -(this.birdModel.position.x)% (this.skyBackgroundImage.width-this.canvasElement.width), 0, this.skyBackgroundImage.width, this.skyBackgroundImage.height);
+    this.gameContext.drawImage(this.birdImage, 5, Math.trunc(this.birdModel.position.y), this.birdImage.width, this.birdImage.height);
+    
+    // ******** OBSTACLES ********
+    
+    this.gameContext.drawImage(this.pipeTopImage,this.pipeTopX,this.pipeTopY, this.pipeTopImage.width, this.pipeTopImage.height);
+    this.gameContext.drawImage(this.pipeBottomImage,this.pipeBottomX,this.pipeBottomY, this.pipeBottomImage.width, -this.pipeBottomImage.height);
+   
+    // Top pipe
+    if (this.pipeTopX<-52) {
+      this.pipeTopX = 320+(Math.trunc(Math.random()*300));
+      this.pipeTopY = -(Math.trunc(Math.random()*320));
+    }
+    else{
+      this.pipeTopX = this.pipeTopX-this.pipeSpeed;
+    }
+   
+    // Bottom pipe
+    if (this.pipeBottomX<-52) {
+      this.pipeBottomX = 320+(Math.trunc(Math.random()*300));
+      this.pipeBottomY = 480 + (Math.trunc(Math.random()*320));
+    }
+    else{
+      this.pipeBottomX = this.pipeBottomX-this.pipeSpeed;
+    }
+    // ******** OBSTACLES ********
   }
 }
 
@@ -120,12 +163,6 @@ let msToSec = milliseconds => milliseconds/1000;
 let distance = (v, t) => v * t; //%360
 
 // Global Variables - left unchanged
-let canvasElement = document.getElementById("game");
-let gameContext = canvasElement.getContext("2d");
-let birdImage = new Image();
-birdImage.src = "https://studio.code.org/blockly/media/skins/flappy/avatar.png";
-let skyBackgroundImage = new Image();
-skyBackgroundImage.src = skyImageData; //"cloud-background.jpg"
 let startX = 0;
 let birdXSpeed =  300; // pixels per second
 
