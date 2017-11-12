@@ -17,7 +17,7 @@ class Point {
      * @return {number} distance between itself and p
      */
     distance(p) {
-       return Math.sqrt((this.x_ - p.x)**2 + (this.y_ - p.y)**2);
+       //return Math.sqrt((this.x_ - p.x)**2 + (this.y_ - p.y)**2);
     }
     
     get x() {
@@ -55,12 +55,12 @@ class Bird {
    */
   
   move(secondsElapsed) {
-    // document.getElementById("input").value=secondsElapsed;
-    this.newX = this.myPosition.x + secondsElapsed*this.myCurrentXSpeed;
-    this.newY = this.myPosition.y + secondsElapsed*this.myCurrentYSpeed;
-    this.myPosition = new Point(this.newX, this.newY);
-    this.myCurrentYSpeed = this.myCurrentYSpeed + secondsElapsed*this.myGravity;
-  }
+    // normal movement
+        this.newX = this.myPosition.x + secondsElapsed*this.myCurrentXSpeed;
+        this.newY = this.myPosition.y + secondsElapsed*this.myCurrentYSpeed;
+        this.myPosition = new Point(this.newX, this.newY);
+        this.myCurrentYSpeed = this.myCurrentYSpeed + secondsElapsed*this.myGravity;
+    }
   
   /**
    * Updates the bird's y velocity caused by a flap given by flapUpSpeed
@@ -89,52 +89,32 @@ class WorldView {
     this.birdImage.src = "https://studio.code.org/blockly/media/skins/flappy/avatar.png";
     this.skyBackgroundImage = new Image();
     this.skyBackgroundImage.src = skyImageData; //"cloud-background.jpg"
-    
-    // ******** OBSTACLES ********
-    this.pipes1 = pipes1;
-    this.pipes2 = pipes2;
-    this.pipeTopImage = new Image();
-    this.pipeTopImage.src = "https://studio.code.org/blockly/media/skins/flappy/obstacle_top.png";
-    this.pipeBottomImage = new Image();
-    this.pipeBottomImage.src = "https://studio.code.org/blockly/media/skins/flappy/obstacle_bottom.png";
   }
 
   render() {
     this.gameContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
     this.gameContext.drawImage(this.skyBackgroundImage, -(this.birdModel.position.x)% (this.skyBackgroundImage.width-this.canvasElement.width), 0, this.skyBackgroundImage.width, this.skyBackgroundImage.height);
     this.gameContext.drawImage(this.birdImage, 5, Math.trunc(this.birdModel.position.y), this.birdImage.width, this.birdImage.height);
-    
-    // ******** OBSTACLES ********
-      this.gameContext.drawImage(this.pipeTopImage, this.pipes1.pipeTopPos.x,  this.pipes1.pipeTopPos.y, this.pipeTopImage.width, this.pipeTopImage.height);
-    /*this.gameContext.drawImage(this.pipeTopImage,this.pipeTopX,this.pipeTopY, this.pipeTopImage.width, this.pipeTopImage.height);*/
-   
-      this.gameContext.drawImage(this.pipeBottomImage, this.pipes1.pipeBottomPos.x, this.pipes1.pipeBottomPos.y, this.pipeBottomImage.width, -this.pipeBottomImage.height);
-
-    this.gameContext.drawImage(this.pipeTopImage, this.pipes2.pipeTopPos.x,  this.pipes2.pipeTopPos.y, this.pipeTopImage.width, this.pipeTopImage.height);
-
-      this.gameContext.drawImage(this.pipeBottomImage, this.pipes2.pipeBottomPos.x, this.pipes2.pipeBottomPos.y, this.pipeBottomImage.width, -this.pipeBottomImage.height);
-      
-      this.pipes1.move();
-      this.pipes2.move(); /*this.gameContext.drawImage(this.pipeBottomImage,this.pipeBottomX,this.pipeBottomY, this.pipeBottomImage.width, -this.pipeBottomImage.height);*/
-    // ******** OBSTACLES ********
   }
 }
 
 class Pipes {
+    // 52 x 320
+    // 320 x 480
     
     constructor(x) {
         this.xPos = x;
         this.pipeGap = 260;
-        this.pipeTopPosition = new Point(this.xPos, -(Math.trunc(Math.random()*320)));
+        this.pipeTopPosition = new Point(this.xPos, -2*(Math.trunc(Math.random()*130)));
         this.pipeBottomPosition = new Point(this.xPos, (480+this.pipeTopPosition.y+this.pipeGap));
         this.pipeSpeed = 2.5;
     }
     
     move(){
         if (this.pipeTopPosition.x<-52) {
-            this.pipeTopPosition = new Point(320, -(Math.trunc(Math.random()*320)));
+            this.pipeTopPosition = new Point(320, -2*(Math.trunc(Math.random()*130)));
             this.pipeBottomPosition= new Point(320,(480+this.pipeTopPosition.y+this.pipeGap));
-            this.pipeTopY = -(Math.trunc(Math.random()*320));
+            this.pipeTopY = -2*(Math.trunc(Math.random()*130));
             this.pipeTopX = 320;
         }
         else {
@@ -150,8 +130,32 @@ class Pipes {
     get pipeBottomPos() {
         return this.pipeBottomPosition;
     }
-
+    
 } // class Pipes
+
+class PipeView {
+    constructor(pipes1, pipes2) {
+        this.pipes1 = pipes1;
+        this.pipes2 = pipes2;
+        this.pipeTopImage = new Image();
+        this.pipeTopImage.src = "https://studio.code.org/blockly/media/skins/flappy/obstacle_top.png";
+        this.pipeBottomImage = new Image();
+        this.pipeBottomImage.src = "https://studio.code.org/blockly/media/skins/flappy/obstacle_bottom.png";
+        
+        this.canvasElement = document.getElementById("game");
+        this.pipesContext = this.canvasElement.getContext("2d");
+    }
+    
+    render() {
+        this.pipesContext.drawImage(this.pipeTopImage, this.pipes1.pipeTopPos.x,  this.pipes1.pipeTopPos.y, this.pipeTopImage.width, this.pipeTopImage.height);
+        
+        this.pipesContext.drawImage(this.pipeBottomImage, this.pipes1.pipeBottomPos.x, this.pipes1.pipeBottomPos.y, this.pipeBottomImage.width, -this.pipeBottomImage.height);
+
+        this.pipesContext.drawImage(this.pipeTopImage, this.pipes2.pipeTopPos.x,  this.pipes2.pipeTopPos.y, this.pipeTopImage.width, this.pipeTopImage.height);
+
+        this.pipesContext.drawImage(this.pipeBottomImage, this.pipes2.pipeBottomPos.x, this.pipes2.pipeBottomPos.y, this.pipeBottomImage.width, -this.pipeBottomImage.height);
+    }
+}
 
 class Controller {
 
@@ -159,24 +163,46 @@ class Controller {
     window.addEventListener("click", m.flap.bind(m));
     this.m = m;
     this.pipes1 = pipes1;
-      this.pipes2 = pipes2;
+    this.pipes2 = pipes2;
     this.v = new WorldView(this.m, this.pipes1, this.pipes2);
+    this.pv = new PipeView(this.pipes1, this.pipes2);
+    this.canvasElement = document.getElementById("game");
+    this.controllerContext = this.canvasElement.getContext("2d");
   }
-  
-  start() {
+    
+    start() {
     this.lastTimeBirdMove=0;
+      
     this.runGame = ms => {
-      this.m.move(msToSec(ms - this.lastTimeBirdMove));
-      this.v.render();
-      this.lastTimeBirdMove = ms;
-      requestAnimationFrame(this.runGame);
+        this.m.move(msToSec(ms - this.lastTimeBirdMove));
+        
+        if(this.m.position.y > 485) {
+            this.loseScreen();
+        } else {
+            this.v.render();
+            this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
+            this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
+            this.pv.render();
+            this.lastTimeBirdMove = ms;
+            requestAnimationFrame(this.runGame);
+        }
     };
     
     // Initial start to infinite loop "runGame"
     requestAnimationFrame(this.runGame);
   } // start()
-  
-}
+
+    loseScreen() {       
+        if(document.addEventListener("click", function(){
+            console.log("click worked");
+            this.m = new Bird(startPos, birdXSpeed, 200, 130);
+            this.pipes1 = new Pipes(320);
+            this.pipes2 = new Pipes(500);
+            this.start();
+        }));
+    } // loseScreen()
+    
+} // class Controller()
 
 let msToSec = milliseconds => milliseconds/1000;
 let distance = (v, t) => v * t; //%360
@@ -186,8 +212,8 @@ let startX = 0;
 let birdXSpeed =  6; // pixels per second
 
 // Initialize objects and start rendering
-let start = new Point(startX,10);
-let m = new Bird(start, birdXSpeed, 200, 130);
+let startPos = new Point(startX,10);
+let m = new Bird(startPos, birdXSpeed, 200, 130);
 let pipes1 = new Pipes(320);
 let pipes2 = new Pipes(500);
 let c = new Controller(m, pipes1, pipes2);
