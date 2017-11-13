@@ -177,48 +177,64 @@ class Controller {
       // CHECK: if bird falls into pit
         if(this.m.position.y > 485) { console.log("FALL TO DEATH"); this.loseScreen.render();} 
       // CHECK: If the bird is passing between or hitting into a pipe from pipes1
-        else if (this.m.position.x >= this.pipes1.pipeTopPos.x) {
-            // If hits top pipe1
-            if(this.m.position.y <= this.pipes1.pipeTopPos.y+320) {console.log("1"); this.loseScreen.render();}
-            // If hits bot pipe1
-            else if(this.m.position.y >= this.pipes1.pipeBottomPos.y-320-24){console.log("2"); this.loseScreen.render();}
-            // Else between pipes, run game normally
-            else {
-              this.m.move(msToSec(ms - this.lastTimeBirdMoved));
-              this.bv.render();
-              this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
-              this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
-                    document.getElementById("input5").value=this.m.position.y;
-                    document.getElementById("input2").value=this.m.position.y;
-                    document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
-                    document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
-              this.pv.render();
-                    this.controllerContext.fillText("PIPE 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
-                    this.controllerContext.fillText("PIPE 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
-              this.lastTimeBirdMoved = ms;
-            }
+        else if(this.pipes1.pipeTopPos.x <=34 && this.pipes1.pipeTopPos.x >= -40) {
+              // If hits top pipe1
+              if(this.m.position.y <= this.pipes1.pipeTopPos.y+320) {console.log("1"); this.loseScreen.render();}
+              // If hits bot pipe1
+              else if(this.m.position.y >= this.pipes1.pipeBottomPos.y-320-24){console.log("2"); this.loseScreen.render();}
+              // Else between pipes, run game normally
+              else {
+                this.m.move(msToSec(ms - this.lastTimeBirdMoved));
+                this.bv.render();
+                this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
+                this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
+                      document.getElementById("input5").value=this.m.position.y;
+                      document.getElementById("input2").value=this.m.position.y;
+                      document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
+                      document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
+                      document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
+                      document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
+                this.pv.render();
+                  // CHEATS
+                      this.controllerContext.fillText("PIPES 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
+                      this.controllerContext.fillText("PIPES 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+                      this.controllerContext.fillRect(34,0,1,500);
+                      this.controllerContext.fillRect(this.pipes1.pipeTopPos.x-75,this.pipes1.pipeTopPos.y+320,200,1);
+                      this.controllerContext.fillRect(this.pipes1.pipeBottomPos.x-75,this.pipes1.pipeBottomPos.y-320,200,1);
+                      this.controllerContext.fillRect(this.pipes2.pipeTopPos.x-75,this.pipes2.pipeTopPos.y+320,200,1);
+                      this.controllerContext.fillRect(this.pipes2.pipeBottomPos.x-75,this.pipes2.pipeBottomPos.y-320,200,1);
+                this.lastTimeBirdMoved = ms;
+              }
         }
       // CHECK: If the bird is between or hitting into a pipe from pipes2
-        else if (this.m.position.x >= this.pipes2.pipeTopPos.x) {
-            // If hits top pipe2
-            if(this.m.position.y <= this.pipes2.pipeTopPos.y+320){console.log("3"); this.loseScreen.render();}
-            // If hits bot pipe2
-            else if(this.m.position.y >= this.pipes2.pipeBottomPos.y-320-24){console.log("4"); this.loseScreen.render();}
-            // Else between pipes, run game normally
-            else {
-              this.m.move(msToSec(ms - this.lastTimeBirdMoved));
-              this.bv.render();
-              this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
-              this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
-                    document.getElementById("input5").value=this.m.position.y;
-                    document.getElementById("input2").value=this.m.position.y;
-                    document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
-                    document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
-              this.pv.render();
-                    this.controllerContext.fillText("PIPE 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
-                    this.controllerContext.fillText("PIPE 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
-              this.lastTimeBirdMoved = ms;
-            }
+        else if(this.pipes2.pipeTopPos.x <=34 && this.pipes2.pipeTopPos.x >= -40){
+              // If hits top pipe2
+              if(this.m.position.y <= this.pipes2.pipeTopPos.y+320){console.log("3"); this.loseScreen.render();}
+              // If hits bot pipe2
+              else if(this.m.position.y >= this.pipes2.pipeBottomPos.y-320-24){console.log("4"); this.loseScreen.render();}
+              // Else between pipes, run game normally
+              else {
+                this.m.move(msToSec(ms - this.lastTimeBirdMoved));
+                this.bv.render();
+                this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
+                this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
+                      document.getElementById("input5").value=this.m.position.y;
+                      document.getElementById("input2").value=this.m.position.y;
+                      document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
+                      document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
+                      document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
+                      document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
+                this.pv.render();
+                  // CHEATS
+                      this.controllerContext.fillText("PIPES 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
+                      this.controllerContext.fillText("PIPES 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+                      this.controllerContext.fillRect(34,0,1,500);
+                      this.controllerContext.fillRect(this.pipes1.pipeTopPos.x-75,this.pipes1.pipeTopPos.y+320,200,1);
+                      this.controllerContext.fillRect(this.pipes1.pipeBottomPos.x-75,this.pipes1.pipeBottomPos.y-320,200,1);
+                      this.controllerContext.fillRect(this.pipes2.pipeTopPos.x-75,this.pipes2.pipeTopPos.y+320,200,1);
+                      this.controllerContext.fillRect(this.pipes2.pipeBottomPos.x-75,this.pipes2.pipeBottomPos.y-320,200,1);
+                this.lastTimeBirdMoved = ms;
+              }
         } 
       // ELSE NOT between pipes, run game normally
         else {
@@ -226,15 +242,21 @@ class Controller {
               this.bv.render();
               this.pipes1.move(); 
               this.pipes2.move(); 
-                    document.getElementById("input5").value=this.m.position.y;
-                    document.getElementById("input2").value=this.m.position.y;
-                    document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
-                    document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
-                    document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
-                    document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
+                     document.getElementById("input5").value=this.m.position.y;
+                      document.getElementById("input2").value=this.m.position.y;
+                      document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
+                      document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
+                      document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
+                      document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
               this.pv.render();
-                    this.controllerContext.fillText("PIPE 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
-                    this.controllerContext.fillText("PIPE 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+                // CHEATS
+                      this.controllerContext.fillText("PIPES 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
+                      this.controllerContext.fillText("PIPES 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+                      this.controllerContext.fillRect(34,0,1,500);
+                      this.controllerContext.fillRect(this.pipes1.pipeTopPos.x-75,this.pipes1.pipeTopPos.y+320,200,1);
+                      this.controllerContext.fillRect(this.pipes1.pipeBottomPos.x-75,this.pipes1.pipeBottomPos.y-320,200,1);
+                      this.controllerContext.fillRect(this.pipes2.pipeTopPos.x-75,this.pipes2.pipeTopPos.y+320,200,1);
+                      this.controllerContext.fillRect(this.pipes2.pipeBottomPos.x-75,this.pipes2.pipeBottomPos.y-320,200,1);
               this.lastTimeBirdMoved = ms;
         }
         // Continue infinite loop of animation
@@ -249,9 +271,9 @@ class Controller {
 
 class StartUp {
   constructor() {
-    this.m = new Bird(new Point(0,75), 6, 290, 160);
-    this.pipes1 = new Pipes(320, 1.9);
-    this.pipes2 = new Pipes(500, 1.9);
+    this.m = new Bird(new Point(0,75), 6, 290, 150);
+    this.pipes1 = new Pipes(320, 1.86);
+    this.pipes2 = new Pipes(500, 1.86);
     this.c = new Controller(this.m, this.pipes1, this.pipes2);
     this.c.start();
   }
