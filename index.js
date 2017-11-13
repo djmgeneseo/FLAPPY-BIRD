@@ -56,9 +56,9 @@ class Bird {
   
   move(secondsElapsed) {
     // normal movement
-        this.newX = this.myPosition.x + secondsElapsed*this.myCurrentXSpeed;
-        this.newY = this.myPosition.y + secondsElapsed*this.myCurrentYSpeed;
-        this.myPosition = new Point(this.newX, this.newY);
+        let newX = this.myPosition.x + secondsElapsed*this.myCurrentXSpeed;
+        let newY = this.myPosition.y + secondsElapsed*this.myCurrentYSpeed;
+        this.myPosition = new Point(newX, newY);
         this.myCurrentYSpeed = this.myCurrentYSpeed + secondsElapsed*this.myGravity;
     }
   
@@ -79,7 +79,7 @@ class Bird {
   }
 }
 
-class WorldView {
+class BirdView {
 
   constructor(model, pipes1, pipes2) {
     this.birdModel = model;
@@ -102,12 +102,12 @@ class Pipes {
     // 52 x 320
     // 320 x 480
     
-    constructor(x) {
+    constructor(x, pipeSpeed) {
         this.xPos = x;
-        this.pipeGap = 260;
+        this.pipeGap = 280;
         this.pipeTopPosition = new Point(this.xPos, -2*(Math.trunc(Math.random()*130)));
         this.pipeBottomPosition = new Point(this.xPos, (480+this.pipeTopPosition.y+this.pipeGap));
-        this.pipeSpeed = 2.5;
+        this.pipeSpeed = pipeSpeed;
     }
     
     move(){
@@ -164,57 +164,127 @@ class Controller {
     this.m = m;
     this.pipes1 = pipes1;
     this.pipes2 = pipes2;
-    this.v = new WorldView(this.m, this.pipes1, this.pipes2);
+    this.bv = new BirdView(this.m, this.pipes1, this.pipes2);
     this.pv = new PipeView(this.pipes1, this.pipes2);
     this.canvasElement = document.getElementById("game");
     this.controllerContext = this.canvasElement.getContext("2d");
+    this.loseScreen = new LoseView(this.m);
   }
     
     start() {
-    this.lastTimeBirdMove=0;
-      
-    this.runGame = ms => {
-        this.m.move(msToSec(ms - this.lastTimeBirdMove));
-        
-        if(this.m.position.y > 485) {
-            this.loseScreen();
-        } else {
-            this.v.render();
-            this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
-            this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
-            this.pv.render();
-            this.lastTimeBirdMove = ms;
-            requestAnimationFrame(this.runGame);
+    this.lastTimeBirdMoved=0;
+    let runGame = ms => {
+      // CHECK: if bird falls into pit
+        if(this.m.position.y > 485) { console.log("FALL TO DEATH"); this.loseScreen.render();} 
+      // CHECK: If the bird is passing between or hitting into a pipe from pipes1
+        else if (this.m.position.x >= this.pipes1.pipeTopPos.x) {
+            // If hits top pipe1
+            if(this.m.position.y <= this.pipes1.pipeTopPos.y+320) {console.log("1"); this.loseScreen.render();}
+            // If hits bot pipe1
+            else if(this.m.position.y >= this.pipes1.pipeBottomPos.y-320-24){console.log("2"); this.loseScreen.render();}
+            // Else between pipes, run game normally
+            else {
+              this.m.move(msToSec(ms - this.lastTimeBirdMoved));
+              this.bv.render();
+              this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
+              this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
+                    document.getElementById("input5").value=this.m.position.y;
+                    document.getElementById("input2").value=this.m.position.y;
+                    document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
+                    document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
+              this.pv.render();
+                    this.controllerContext.fillText("PIPE 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
+                    this.controllerContext.fillText("PIPE 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+              this.lastTimeBirdMoved = ms;
+            }
         }
-    };
+      // CHECK: If the bird is between or hitting into a pipe from pipes2
+        else if (this.m.position.x >= this.pipes2.pipeTopPos.x) {
+            // If hits top pipe2
+            if(this.m.position.y <= this.pipes2.pipeTopPos.y+320){console.log("3"); this.loseScreen.render();}
+            // If hits bot pipe2
+            else if(this.m.position.y >= this.pipes2.pipeBottomPos.y-320-24){console.log("4"); this.loseScreen.render();}
+            // Else between pipes, run game normally
+            else {
+              this.m.move(msToSec(ms - this.lastTimeBirdMoved));
+              this.bv.render();
+              this.pipes1.move(); // document.getElementById("input").value=this.pipes1.pipeBottomPos.y;
+              this.pipes2.move(); // document.getElementById("input2").value=this.pipes2.pipeBottomPos.y;
+                    document.getElementById("input5").value=this.m.position.y;
+                    document.getElementById("input2").value=this.m.position.y;
+                    document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
+                    document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
+              this.pv.render();
+                    this.controllerContext.fillText("PIPE 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
+                    this.controllerContext.fillText("PIPE 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+              this.lastTimeBirdMoved = ms;
+            }
+        } 
+      // ELSE NOT between pipes, run game normally
+        else {
+          this.m.move(msToSec(ms - this.lastTimeBirdMoved));
+              this.bv.render();
+              this.pipes1.move(); 
+              this.pipes2.move(); 
+                    document.getElementById("input5").value=this.m.position.y;
+                    document.getElementById("input2").value=this.m.position.y;
+                    document.getElementById("input4").value=this.pipes2.pipeTopPos.y+320;
+                    document.getElementById("input6").value=this.pipes2.pipeBottomPos.y-320-24;
+                    document.getElementById("input1").value=this.pipes1.pipeTopPos.y+320;
+                    document.getElementById("input3").value=this.pipes1.pipeBottomPos.y-320-24;
+              this.pv.render();
+                    this.controllerContext.fillText("PIPE 1",this.pipes1.pipeTopPos.x,this.pipes1.pipeTopPos.y+320);
+                    this.controllerContext.fillText("PIPE 2",this.pipes2.pipeTopPos.x,this.pipes2.pipeTopPos.y+320);
+              this.lastTimeBirdMoved = ms;
+        }
+        // Continue infinite loop of animation
+        requestAnimationFrame(runGame);
+    }; // runGame (SHOULD BE INFINITE)
     
-    // Initial start to infinite loop "runGame"
-    requestAnimationFrame(this.runGame);
+    // Initiate start to infinite loop "runGame"
+    requestAnimationFrame(runGame);
   } // start()
-
-    loseScreen() {       
-        if(document.addEventListener("click", function(){
-            console.log("click worked");
-            this.m = new Bird(startPos, birdXSpeed, 200, 130);
-            this.pipes1 = new Pipes(320);
-            this.pipes2 = new Pipes(500);
-            this.start();
-        }));
-    } // loseScreen()
-    
+  
 } // class Controller()
+
+class StartUp {
+  constructor() {
+    this.m = new Bird(new Point(0,75), 6, 290, 160);
+    this.pipes1 = new Pipes(320, 1.9);
+    this.pipes2 = new Pipes(500, 1.9);
+    this.c = new Controller(this.m, this.pipes1, this.pipes2);
+    this.c.start();
+  }
+}
+
+class LoseView {
+  constructor(bird) {
+    this.playAgainBtn = document.getElementById("play-again-btn");
+    this.m = bird;
+    this.canvasElement = document.getElementById("game");
+    this.loseContext = this.canvasElement.getContext("2d");
+    this.loseContext.font = "20px Georgia";
+  }
+  
+  render() {
+      this.loseContext.fillStyle = 'white';
+      this.loseContext.fillText("You Lose!", this.canvasElement.width/2-34, this.canvasElement.height/2-50);
+      this.playAgainBtn.style.display = 'inline';
+      this.playAgainBtn.addEventListener("click", function(){
+        location.reload(true);});
+  }
+} // class LoseView()
 
 let msToSec = milliseconds => milliseconds/1000;
 let distance = (v, t) => v * t; //%360
 
 // Global Variables - left unchanged
-let startX = 0;
-let birdXSpeed =  6; // pixels per second
+let startNewGame = new StartUp();
 
-// Initialize objects and start rendering
-let startPos = new Point(startX,10);
-let m = new Bird(startPos, birdXSpeed, 200, 130);
-let pipes1 = new Pipes(320);
-let pipes2 = new Pipes(500);
-let c = new Controller(m, pipes1, pipes2);
-c.start();
+
+
+
+
+
+
+

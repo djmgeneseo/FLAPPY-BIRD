@@ -2,3 +2,26 @@
   background-color: cyan;
   border: 2px dashed white;
 }
+
+#play-again-btn {
+  background-color: #008080;
+  color: #fff;
+  position: absolute;
+  left: 140px;
+  top: 230px;
+  display: none;
+}
+
+#input1,
+#input2,
+#input3,
+#input4,
+#input5,
+#input6 {
+  width: 100px;
+}
+
+.col {
+  display: inline-block;
+  width: 205px;
+}
