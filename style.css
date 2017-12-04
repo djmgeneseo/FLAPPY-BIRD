@@ -22,6 +22,6 @@
 }
 
 .col {
-  display: inline-block;
+  display: inline;
   width: 205px;
 }
