@@ -38,6 +38,8 @@ class Bird {
         this.currentPosition_ = startPosition;
         this.xSpeed_ = startXSpeed;
         this.ySpeed_ = 0;
+        this.width_ = 34;
+        this.height_ = 24
     }
 
     /**
@@ -68,6 +70,16 @@ class Bird {
     get position() {
         // getter for current position of Bird
         return this.currentPosition_;
+    }
+
+    get width() {
+        // getter for current position of Bird
+        return this.width_;
+    }
+
+    get height() {
+        // getter for current position of Bird
+        return this.height_;
     }
 }
 
@@ -197,6 +209,25 @@ class PipeWorldView {
     }
 }
 
+class LoseView {
+    constructor() {
+        this.playAgainBtn = document.getElementById("play-again-btn");
+        this.canvasElement = document.getElementById("game");
+        this.loseContext = this.canvasElement.getContext("2d");
+        this.loseContext.font = "20px Georgia";
+    }
+
+    render() {
+        this.loseContext.fillStyle = 'white';
+        this.loseContext.fillText("You Lose!", this.canvasElement.width / 2 - 34, this.canvasElement.height / 2 - 50);
+        this.playAgainBtn.style.display = 'inline';
+        this.playAgainBtn.addEventListener("click", function () {
+            location.reload(true);
+        });
+    }
+} // class LoseView()
+
+
 /**
  * World class both creates and stores every model (MVC) object requisite for Flappy Bird.
  */
@@ -227,6 +258,28 @@ class World {
         }
     }
 
+    /* Returns true if collision, false if no collision
+     CHECK IF:
+        1) The bird is within range of a pipe
+        2) The bird has NOT passed the pipe
+        3) The bird is safely between the pipes -> false
+            else, true
+    */
+    checkForCollision() {
+        // IF the bird is approaching the first pipe at a distance of AT LEAST 10 pixles
+        if ((this.bird_.position.x >= (this.pw_.getPipeNumber(0).position.x - this.bird_.width))) {
+            // IF the bird has NOT passed the pipe (the +10 is to compensate for the imperfection of the bird's image - the game ends when the back-end of the bird does not quite hit the pipe on its way out of the pipe gap)
+            if (!(this.bird_.position.x+10 >= this.pw_.getPipeNumber(0).position.x + this.pw_.getPipeNumber(0).width)) {
+                // IF the bird is within the y-bounds of the gap, return true. Else, return false
+                if ((this.bird_.position.y > (this.pw_.getPipeNumber(0).position.y + this.pw_.getPipeNumber(0).height)) && (this.bird_.position.y < (this.pw_.getPipeNumber(0).position.y + this.pw_.getPipeNumber(0).height + this.pw_.getPipeNumber(0).gap - this.bird.height))) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+
     get bird() {
         return this.bird_;
     }
@@ -252,9 +305,10 @@ class WorldView {
         this.bird_ = world.bird;
         window.addEventListener('click', this.bird_.flap.bind(this.bird_));
 
-        // Views (PipeWorldView and BirdView objects)
+        // Views
         this.pwv_ = new PipeWorldView(this.pw_, this.bird_);
         this.bv_ = new BirdView(this.bird_);
+        this.lv_ = new LoseView();
 
         // Sky background
         this.skyBackgroundImage_ = new Image();
@@ -263,6 +317,10 @@ class WorldView {
         // Canvas element and context
         this.canvasElement_ = document.getElementById("game");
         this.canvasContext_ = this.canvasElement_.getContext("2d");
+    }
+
+    get loseScreen() {
+        return this.lv_;
     }
 
     render() {
@@ -290,15 +348,20 @@ class Controller {
         this.lastTimeMoved = 0;
 
         this.runGame = ms => {
-            this.w_.bird.move(msToSec(ms - this.lastTimeMoved));
+            // Check if pipe's off screen
             this.w_.checkIfPipeOffScreen();
-            this.wv_.render();
-            this.lastTimeMoved = ms;
+            // Check for collision
+            if (this.w_.checkForCollision()) {
+                this.wv_.loseScreen.render();
+            } else {
+                this.w_.bird.move(msToSec(ms - this.lastTimeMoved));
+                this.wv_.render();
+                this.lastTimeMoved = ms;
 
-            // BUG TESTING
-            document.getElementById("input1").value = (this.w_.bird.position.x);
-            document.getElementById("input4").value = (this.w_.pipeWorld.getPipeNumber(0).position.x);
-
+                // BUG TESTING
+                document.getElementById("input1").value = (this.w_.bird.position.x);
+                document.getElementById("input4").value = (this.w_.pipeWorld.getPipeNumber(0).position.x);
+            }
             requestAnimationFrame(this.runGame);
         };
 
