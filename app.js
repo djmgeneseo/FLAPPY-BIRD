@@ -211,16 +211,30 @@ class PipeWorldView {
 
 class LoseView {
     constructor() {
-        this.playAgainBtn = document.getElementById("play-again-btn");
+        this.playAgainBtn = document.querySelector(".play-again-btn-off");
+        this.scoreBox = document.querySelector(".score");
         this.canvasElement = document.getElementById("game");
         this.loseContext = this.canvasElement.getContext("2d");
-        this.loseContext.font = "20px Georgia";
+        this.loseContext.font = "25px Helvetica";
+        this.loseContext.save();
     }
 
-    render() {
+    render(score) {
         this.loseContext.fillStyle = 'white';
-        this.loseContext.fillText("You Lose!", this.canvasElement.width / 2 - 34, this.canvasElement.height / 2 - 50);
-        this.playAgainBtn.style.display = 'inline';
+        this.loseContext.shadowOffsetX = 3;
+        this.loseContext.shadowOffsetY = 4;
+        this.loseContext.shadowBlur = 2;
+        this.loseContext.shadowColor = "#008080";
+        this.loseContext.fillText("Y O U  L O S E", this.canvasElement.width / 2 - 85, this.canvasElement.height / 2 - 50);
+        // this render keeps calling, so changing chadow blur again after calling the text creates a text animation.
+        this.loseContext.shadowBlur = 15;
+
+//        this.scoreBox.style.left = "100px";
+//        this.scoreBox.style.top = "240px";
+        this.scoreBox.classList.add("lose-screen-score-box");
+
+        // Play button
+        this.playAgainBtn.classList.add("play-again-btn-on");
         this.playAgainBtn.addEventListener("click", function () {
             location.reload(true);
         });
@@ -242,17 +256,7 @@ class World {
     }
 
     checkIfPipeOffScreen() {
-
-        // BUG TESTING
-        document.getElementById("input5").value = (this.pw_.getPipeNumber(0).position.x + this.pw_.getPipeNumber(0).width);
-
         if (this.bird_.position.x > (this.pw_.getPipeNumber(0).position.x + this.pw_.getPipeNumber(0).width)) {
-            // BUG TESTING
-            document.getElementById("input6").value = "Yes";
-            setTimeout(function () {
-                document.getElementById("input6").value = "No";
-            }, 300);
-
             this.pw_.deleteFirstPipe();
             this.pw_.createNewPipe((this.pw_.getPipeNumber(this.pw_.getNumberOfPipes() - 1).position.x + 250));
         }
@@ -348,19 +352,17 @@ class Controller {
         this.lastTimeMoved = 0;
 
         this.runGame = ms => {
+            // Score
+            document.querySelector(".score").value = this.w_.bird.position.x.toFixed(2);
             // Check if pipe's off screen
             this.w_.checkIfPipeOffScreen();
             // Check for collision
             if (this.w_.checkForCollision()) {
-                this.wv_.loseScreen.render();
+                this.wv_.loseScreen.render(this.w_.bird.position.x);
             } else {
                 this.w_.bird.move(msToSec(ms - this.lastTimeMoved));
                 this.wv_.render();
                 this.lastTimeMoved = ms;
-
-                // BUG TESTING
-                document.getElementById("input1").value = (this.w_.bird.position.x);
-                document.getElementById("input4").value = (this.w_.pipeWorld.getPipeNumber(0).position.x);
             }
             requestAnimationFrame(this.runGame);
         };
@@ -375,3 +377,9 @@ let msToSec = milliseconds => milliseconds / 1000;
 
 let c = new Controller();
 c.start();
+
+
+
+
+
+
