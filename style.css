@@ -1,49 +1,27 @@
 #game {
-    border: 5px solid #008080;
+  background-color: cyan;
+  border: 2px dashed white;
 }
 
-.play-again-btn-off {
-    background-color: #008080;
-    color: #fff;
-    position: absolute;
-    left: 135px;
-    top: 480px;
-    display: none;
+#play-again-btn {
+  background-color: #008080;
+  color: #fff;
+  position: absolute;
+  left: 140px;
+  top: 295px;
+  display: none;
 }
 
-.play-again-btn-on {
-    display: inline;
-    left: 135px;
-    top: 295px;
-}
-
-.score {
-    position: absolute;
-    padding: 2px;
-    left: 13px;
-    top: 472px;
-    width: auto;
-    border-width: 2px;
-    border-color: #008080;
-    text-shadow: 3px;
-}
-
-.lose-screen-score-box {
-    -webkit-transition: 500ms;
-    transition: 500ms;
-    left: 88px;
-    top: 240px;
-}
-
+#input1,
 #input2,
 #input3,
 #input4,
 #input5,
 #input6 {
-    width: 100px;
+  width: 100px;
 }
 
 .col {
-    display: inline;
-    width: 205px;
+  display: inline-block;
+  width: 205px;
 }
